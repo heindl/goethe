@@ -1,10 +1,12 @@
-// Copyright 2018 Parker Heindl. All rights reserved.
-// Licensed under the MIT License. See LICENSE.md in the
-// project root for information.
+// Copyright (c) 2018 Parker Heindl. All rights reserved.
 //
+// Use of this source code is governed by the MIT License.
+// Read LICENSE.md in the project root for information.
+
 package license
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/heindl/goethe/utilities"
@@ -20,6 +22,8 @@ func TestRenderInstall(t *testing.T) {
 
 	b, err := Render(mod)
 	assert.NoError(t, err)
+
+	fmt.Println(string(b))
 
 	assert.Equal(t, string(b), `
 ## License

@@ -1,7 +1,8 @@
-// Copyright 2018 Parker Heindl. All rights reserved.
-// Licensed under the MIT License. See LICENSE.md in the
-// project root for information.
+// Copyright (c) 2018 Parker Heindl. All rights reserved.
 //
+// Use of this source code is governed by the MIT License.
+// Read LICENSE.md in the project root for information.
+
 package license
 
 import (
@@ -14,6 +15,8 @@ import (
 )
 
 //go:generate parcello -m license.md
+
+// Render returns the relevant README.md section.
 func Render(modInfo *utilities.ModuleInfo) ([]byte, error) {
 
 	lcns, err := license.NewFromDir(modInfo.FilePath())

@@ -1,7 +1,8 @@
-// Copyright 2018 Parker Heindl. All rights reserved.
-// Licensed under the MIT License. See LICENSE.md in the
-// project root for information.
+// Copyright (c) 2018 Parker Heindl. All rights reserved.
 //
+// Use of this source code is governed by the MIT License.
+// Read LICENSE.md in the project root for information.
+
 package cobra
 
 import (
@@ -21,7 +22,7 @@ import (
 	"golang.org/x/sync/errgroup"
 )
 
-const tempFileSuffix = "_cobra_readme_tmp_"
+const tempFileSuffix = "_goethe_tmp_"
 
 const rootCmdTemplateName = "cobraReadmeRootCmd"
 

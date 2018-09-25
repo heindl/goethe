@@ -1,7 +1,8 @@
-// Copyright 2018 Parker Heindl. All rights reserved.
-// Licensed under the MIT License. See LICENSE in the project root
-// for license information.
+// Copyright (c) 2018 Parker Heindl. All rights reserved.
 //
+// Use of this source code is governed by the MIT License.
+// Read LICENSE.md in the project root for information.
+
 package cobra
 
 import (
@@ -13,9 +14,52 @@ import (
 	"golang.org/x/sync/errgroup"
 )
 
+type cobraRootCommands map[string][]string
+
 // TODO: This is a implementation should be refactored with the ssa package for simplicity and correctness ...
 // Current implementation will miss function reassignments and recursive functions.
 // But the tooling around ssa is still in active development.
+
+func search(info *utilities.ModuleInfo) (cobraRootCommands, error) {
+
+	// Note that Packages will only call ParseDir once across the runtime.
+	pkgs, err := info.Packages()
+	if err != nil {
+		return nil, err
+	}
+
+	y := cobraRootCommands{}
+	locker := sync.Mutex{}
+
+	eg := errgroup.Group{}
+	for _, _pkg := range pkgs {
+		pkg := _pkg
+		eg.Go(func() error {
+			vars := cobraCmdVars{vars: make(map[string]struct{})}
+			ast.Walk(vars, pkg.AstPkg)
+			execs := execCalls{
+				importPath: pkg.ImportPath,
+			}
+			ast.Walk(&execs, pkg.AstPkg)
+			for _, ex := range execs.execs {
+				if _, ok := vars.vars[path.Base(ex.cmdVarName)]; ok {
+					locker.Lock()
+					if _, ok := y[ex.cmdVarName]; !ok {
+						y[ex.cmdVarName] = []string{}
+					}
+					y[ex.cmdVarName] = append(y[ex.cmdVarName], path.Dir(ex.enclFunc))
+					locker.Unlock()
+				}
+			}
+			return nil
+		})
+	}
+	if err := eg.Wait(); err != nil {
+		return nil, err
+	}
+
+	return y, nil
+}
 
 type execCalls struct {
 	enclFunc   string
@@ -88,47 +132,4 @@ func (Ω cobraCmdVars) Visit(nd ast.Node) ast.Visitor {
 	}
 	Ω.vars[Ω.lastValueName] = struct{}{}
 	return Ω
-}
-
-type cobraRootCommands map[string][]string
-
-func search(info *utilities.ModuleInfo) (cobraRootCommands, error) {
-
-	// Note that Packages will only call ParseDir once across the runtime.
-	pkgs, err := info.Packages()
-	if err != nil {
-		return nil, err
-	}
-
-	y := cobraRootCommands{}
-	locker := sync.Mutex{}
-
-	eg := errgroup.Group{}
-	for _, _pkg := range pkgs {
-		pkg := _pkg
-		eg.Go(func() error {
-			vars := cobraCmdVars{vars: make(map[string]struct{})}
-			ast.Walk(vars, pkg.AstPkg)
-			execs := execCalls{
-				importPath: pkg.ImportPath,
-			}
-			ast.Walk(&execs, pkg.AstPkg)
-			for _, ex := range execs.execs {
-				if _, ok := vars.vars[path.Base(ex.cmdVarName)]; ok {
-					locker.Lock()
-					if _, ok := y[ex.cmdVarName]; !ok {
-						y[ex.cmdVarName] = []string{}
-					}
-					y[ex.cmdVarName] = append(y[ex.cmdVarName], path.Dir(ex.enclFunc))
-					locker.Unlock()
-				}
-			}
-			return nil
-		})
-	}
-	if err := eg.Wait(); err != nil {
-		return nil, err
-	}
-
-	return y, nil
 }

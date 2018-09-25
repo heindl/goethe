@@ -1,4 +1,9 @@
-package command_line
+// Copyright (c) 2018 Parker Heindl. All rights reserved.
+//
+// Use of this source code is governed by the MIT License.
+// Read LICENSE.md in the project root for information.
+
+package cmdline
 
 import (
 	"github.com/heindl/goethe/parsers/cobra"
@@ -7,6 +12,8 @@ import (
 )
 
 //go:generate parcello -m command.md
+
+// Render returns the relevant README.md section.
 func Render(mod *utilities.ModuleInfo) ([]byte, error) {
 
 	commands, err := cobra.Parse(mod)

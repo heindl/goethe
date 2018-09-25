@@ -1,13 +1,14 @@
-// Copyright 2018 Parker Heindl. All rights reserved.
-// Licensed under the MIT License. See LICENSE.md in the
-// project root for information.
+// Copyright (c) 2018 Parker Heindl. All rights reserved.
 //
+// Use of this source code is governed by the MIT License.
+// Read LICENSE.md in the project root for information.
+
 package render
 
 import (
 	"io"
 
-	"github.com/heindl/goethe/sections/command_line"
+	"github.com/heindl/goethe/sections/cmdline"
 	"github.com/heindl/goethe/sections/header"
 	"github.com/heindl/goethe/sections/install"
 	"github.com/heindl/goethe/sections/license"
@@ -33,7 +34,7 @@ func (Ω Section) Render(info *utilities.ModuleInfo) ([]byte, error) {
 	case Install:
 		return install.Render(info)
 	case Usage:
-		return command_line.Render(info)
+		return cmdline.Render(info)
 	case License:
 		return license.Render(info)
 	default:

@@ -1,3 +1,8 @@
+// Copyright (c) 2018 Parker Heindl. All rights reserved.
+//
+// Use of this source code is governed by the MIT License.
+// Read LICENSE.md in the project root for information.
+
 package cobra
 
 import (
@@ -82,9 +87,8 @@ func getCobraReadMeRootCommand(i interface{}) *cobra.Command {
 	if reflect.ValueOf(i).Kind() != reflect.Ptr {
 		cmd := i.(cobra.Command)
 		return &cmd
-	} else {
-		return i.(*cobra.Command)
 	}
+	return i.(*cobra.Command)
 }
 
 func main() {

@@ -1,7 +1,8 @@
-// Copyright 2018 Parker Heindl. All rights reserved.
-// Licensed under the MIT License. See LICENSE.md in the
-// project root for information.
+// Copyright (c) 2018 Parker Heindl. All rights reserved.
 //
+// Use of this source code is governed by the MIT License.
+// Read LICENSE.md in the project root for information.
+
 package cobra
 
 import (
@@ -41,7 +42,7 @@ func TestSearcherInMain(t *testing.T) {
 	mod, err := utilities.ReadModule(".")
 	assert.NoError(t, err)
 
-	mod.PackagePathFilters = append(mod.PackagePathFilters, "_test")
+	mod.PackagePathFilters = append(mod.PackagePathFilters, ".*_test")
 
 	cmds, err := search(mod)
 	assert.NoError(t, err)

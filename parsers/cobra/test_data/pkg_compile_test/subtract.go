@@ -1,11 +1,13 @@
-// Copyright 2018 Parker Heindl. All rights reserved.
-// Licensed under the MIT License. See LICENSE.md in the
-// project root for information.
+// Copyright (c) 2018 Parker Heindl. All rights reserved.
 //
+// Use of this source code is governed by the MIT License.
+// Read LICENSE.md in the project root for information.
+
 package pkg_compile_test
 
 import (
 	"fmt"
+	"os"
 	"strconv"
 
 	"github.com/spf13/cobra"
@@ -24,7 +26,7 @@ var subtractCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		fmt.Println(a - b)
+		fmt.Fprint(os.Stdout, a-b)
 		return nil
 	},
 }

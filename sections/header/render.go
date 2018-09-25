@@ -1,11 +1,11 @@
-// Copyright 2018 Parker Heindl. All rights reserved.
-// Licensed under the MIT License. See LICENSE.md in the
-// project root for information.
+// Copyright (c) 2018 Parker Heindl. All rights reserved.
 //
+// Use of this source code is governed by the MIT License.
+// Read LICENSE.md in the project root for information.
+
 package header
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/heindl/goethe/parsers/cobra"
@@ -14,6 +14,7 @@ import (
 
 //go:generate parcello -m header.md
 
+// Render returns the relevant README.md section.
 func Render(modInfo *utilities.ModuleInfo) ([]byte, error) {
 
 	versTag, err := utilities.GitLatestTag(modInfo.FilePath())
@@ -28,8 +29,9 @@ func Render(modInfo *utilities.ModuleInfo) ([]byte, error) {
 		ShortDescription string
 		LongDescription  string
 	}{
-		ModuleName:    modInfo.Name(),
-		VersionTag:    versTag,
+		ModuleName: modInfo.Name(),
+		VersionTag: versTag,
+		// TODO: Mock time in tests.
 		FormattedDate: time.Now().Format("January 2, 2006"),
 	}
 
@@ -37,8 +39,6 @@ func Render(modInfo *utilities.ModuleInfo) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-
-	fmt.Println("cmdData", cmdData)
 
 	if len(cmdData) > 0 {
 		data.ShortDescription = cmdData[0].Short

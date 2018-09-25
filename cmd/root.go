@@ -1,7 +1,8 @@
-// Copyright 2018 Parker Heindl. All rights reserved.
-// Licensed under the MIT License. See LICENSE.md in the
-// project root for information.
+// Copyright (c) 2018 Parker Heindl. All rights reserved.
 //
+// Use of this source code is governed by the MIT License.
+// Read LICENSE.md in the project root for information.
+
 package cmd
 
 import (
@@ -20,7 +21,7 @@ import (
 )
 
 //go:generate parcello -m long.md
-// rootCmd represents the base command when called without any subcommands
+
 var goetheRootCmd = &cobra.Command{
 	Use:               "goethe [command_directory]",
 	Short:             "Statically generate a github flavored README.md from a Go module.",
@@ -41,12 +42,12 @@ var goetheRootCmd = &cobra.Command{
 func init() {
 	descriptionFile, err := parcello.Open("long.md")
 	if err != nil {
-		fmt.Println(err)
+		fmt.Fprint(os.Stderr, err.Error())
 		os.Exit(1)
 	}
 	b, err := ioutil.ReadAll(descriptionFile)
 	if err != nil {
-		fmt.Println(err)
+		fmt.Fprint(os.Stderr, err.Error())
 		os.Exit(1)
 	}
 	goetheRootCmd.Long = string(b)
@@ -98,11 +99,10 @@ func checkReadmeWriteSafety(readmeFilePath string) error {
 	return nil
 }
 
-// FindRootCommandVars adds all child commands to the root command and sets flags appropriately.
-// This is called by main.main(). It only needs to happen once to the rootCmd.
+// Execute exports the root command execution call to a main package.
 func Execute() {
 	if err := goetheRootCmd.Execute(); err != nil {
-		fmt.Println(err)
+		fmt.Fprint(os.Stderr, err.Error())
 		os.Exit(1)
 	}
 }

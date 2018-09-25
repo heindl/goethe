@@ -1,7 +1,8 @@
-// Copyright 2018 Parker Heindl. All rights reserved.
-// Licensed under the MIT License. See LICENSE.md in the
-// project root for information.
+// Copyright (c) 2018 Parker Heindl. All rights reserved.
 //
+// Use of this source code is governed by the MIT License.
+// Read LICENSE.md in the project root for information.
+
 package pkg_compile_test
 
 import (
@@ -11,7 +12,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Test that more comments can be added below
+// RootCmd is an exported root command variable to test execution from an external package.
 var RootCmd = &cobra.Command{
 	Use:   "go-maths",
 	Short: "run some maths",
@@ -20,7 +21,7 @@ var RootCmd = &cobra.Command{
 
 func Execute() {
 	if err := RootCmd.Execute(); err != nil {
-		fmt.Println(err)
+		fmt.Fprint(os.Stderr, err.Error())
 		os.Exit(1)
 	}
 }

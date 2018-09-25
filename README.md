@@ -23,6 +23,7 @@ go get -u github.com/heindl/goethe
 ```bash
 goethe [command_directory]
 ```
+###### Flags
 ```bash
 -p, --print   Print the template data to standard out.
 ```

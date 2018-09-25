@@ -1,7 +1,8 @@
-// Copyright 2018 Parker Heindl. All rights reserved.
-// Licensed under the MIT License. See LICENSE.md in the
-// project root for information.
+// Copyright (c) 2018 Parker Heindl. All rights reserved.
 //
+// Use of this source code is governed by the MIT License.
+// Read LICENSE.md in the project root for information.
+
 package utilities
 
 import (
@@ -29,6 +30,30 @@ type ModuleInfo struct {
 	localFilePath      string
 	packages           []Pkg
 	PackagePathFilters []string
+}
+
+var reTestPkgFilter = regexp.MustCompile(`.*_test`)
+var reGitFilter = regexp.MustCompile(`.*.git`)
+
+func (Ω *ModuleInfo) regExpPackageFilters() ([]*regexp.Regexp, error) {
+
+	y := []*regexp.Regexp{
+		reGitFilter,
+	}
+	for _, fltr := range Ω.PackagePathFilters {
+		re, err := regexp.Compile(fltr)
+		if err != nil {
+			return nil, errors.Wrapf(err, "could not compile filter regexp `%s`", re)
+		}
+		y = append(y, re)
+	}
+
+	// if is not a testing environment, ignore directories that have _test suffix.
+	if flag.Lookup("test.v") == nil {
+		y = append(y, reTestPkgFilter)
+	}
+	return y, nil
+
 }
 
 func (Ω *ModuleInfo) AbsPathFromImportPath(impPath string) string {
@@ -71,19 +96,10 @@ type Pkg struct {
 // Packages examines a module recursively for packages.
 // If not run in a `go test` environment, it will ignore directories with `_test` suffix.
 func (Ω *ModuleInfo) Packages() ([]Pkg, error) {
-	//if Ω.packages != nil {
-	//	return Ω.packages, nil
-	//}
 
-	// if is not a testing environment, ignore directories that have _test suffix.
-	if flag.Lookup("test.v") == nil {
-		ex := false
-		for _, filter := range Ω.PackagePathFilters {
-			ex = ex || filter == "_test"
-		}
-		if !ex {
-			Ω.PackagePathFilters = append(Ω.PackagePathFilters, "_test")
-		}
+	reFilters, err := Ω.regExpPackageFilters()
+	if err != nil {
+		return nil, err
 	}
 
 	pkgCh := make(chan Pkg)
@@ -98,39 +114,35 @@ func (Ω *ModuleInfo) Packages() ([]Pkg, error) {
 		if err != nil {
 			return err
 		}
-		if info.IsDir() {
-
-			for _, fltr := range Ω.PackagePathFilters {
-				re, err := regexp.Compile(fltr)
-				if err != nil {
-					return errors.WithStack(err)
-				}
-				if re.MatchString(_path) {
-					return nil
-				}
-			}
-
-			rel, err := filepath.Rel(Ω.FilePath(), _path)
-			if err != nil {
-				return errors.Wrapf(err, "could not get relative path [%s, %s]", Ω.FilePath(), _path)
-			}
-
-			eg.Go(func() error {
-				ts := token.NewFileSet()
-				pkgs, err := parser.ParseDir(ts, _path, nil, parser.AllErrors)
-				if err != nil {
-					return errors.Wrapf(err, "could not parse %s", _path)
-				}
-				for _, pkg := range pkgs {
-					pkgCh <- Pkg{
-						ImportPath: path.Join(Ω.RemotePath(), rel),
-						AstPkg:     pkg,
-						AbsPath:    _path,
-					}
-				}
-				return nil
-			})
+		if !info.IsDir() {
+			return nil
 		}
+		for _, re := range reFilters {
+			if re.MatchString(_path) {
+				return nil
+			}
+		}
+
+		rel, err := filepath.Rel(Ω.FilePath(), _path)
+		if err != nil {
+			return errors.Wrapf(err, "could not get relative path [%s, %s]", Ω.FilePath(), _path)
+		}
+
+		eg.Go(func() error {
+			ts := token.NewFileSet()
+			pkgs, err := parser.ParseDir(ts, _path, nil, parser.AllErrors)
+			if err != nil {
+				return errors.Wrapf(err, "could not parse %s", _path)
+			}
+			for _, pkg := range pkgs {
+				pkgCh <- Pkg{
+					ImportPath: path.Join(Ω.RemotePath(), rel),
+					AstPkg:     pkg,
+					AbsPath:    _path,
+				}
+			}
+			return nil
+		})
 		return nil
 	}); err != nil {
 		return nil, err
