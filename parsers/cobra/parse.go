@@ -53,13 +53,21 @@ func (Ω *CommandData) formatFlagUsages(flags string) (res []string) {
 	return
 }
 
+func stripIndents(s string) string {
+	lines := strings.Split(s, "\n")
+	for i, s := range lines {
+		lines[i] = strings.TrimSpace(s)
+	}
+	return strings.Join(lines, "\n")
+}
+
 func (Ω *CommandData) update(cmd *cobra.Command) {
 	Ω.Name = cmd.Name()
 	Ω.Use = cmd.Use
 	Ω.UseLine = cmd.UseLine()
-	Ω.Short = cmd.Short
-	Ω.Long = cmd.Long
-	Ω.Example = cmd.Example
+	Ω.Short = stripIndents(cmd.Short)
+	Ω.Long = stripIndents(cmd.Long)
+	Ω.Example = stripIndents(cmd.Example)
 	Ω.HasExample = cmd.HasExample()
 	Ω.Runnable = cmd.Runnable()
 	Ω.IsAvailableCommand = cmd.IsAvailableCommand()

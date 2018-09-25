@@ -23,19 +23,24 @@ import (
 //go:generate parcello -m long.md
 
 var goetheRootCmd = &cobra.Command{
-	Use:               "goethe [command_directory]",
-	Short:             "Statically generate a github flavored README.md from a Go module.",
+	Use:               "goethe [go_module_path]",
+	Short:             "Generate a github flavored README.md file from a Go module.",
 	DisableAutoGenTag: true,
 	// TODO: Include Version from static parsing.
-	RunE: func(cmd *cobra.Command, args []string) error {
+	Run: func(cmd *cobra.Command, args []string) {
 		directoryPath := "."
 		if len(args) > 0 {
 			directoryPath = args[0]
 		}
 		if cmd.Flag("print") != nil && cmd.Flag("print").Value.String() == "true" {
-			return render.Render(directoryPath, os.Stdout)
+			if err := render.Render(directoryPath, os.Stdout); err != nil {
+				fmt.Fprint(os.Stderr, err.Error())
+			}
+			return
 		}
-		return writeReadme(directoryPath)
+		if err := writeReadme(directoryPath); err != nil {
+			fmt.Fprint(os.Stderr, err.Error())
+		}
 	},
 }
 

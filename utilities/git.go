@@ -12,10 +12,11 @@ import (
 	"os/user"
 	"path/filepath"
 	"regexp"
+	"sort"
 	"strings"
 
 	"github.com/pkg/errors"
-	git "gopkg.in/src-d/go-git.v4"
+	"gopkg.in/src-d/go-git.v4/plumbing"
 )
 
 func GitLatestTag(modPath string) (string, error) {
@@ -25,18 +26,29 @@ func GitLatestTag(modPath string) (string, error) {
 		return "", errors.Wrapf(err, "could not open git repo %s", modPath)
 	}
 
-	tags, err := repo.Tags()
+	tagObjects, err := repo.Tags()
 	if err != nil {
-		return "", err
+		return "", errors.Wrapf(err, "could not read tags %s", modPath)
 	}
-	defer tags.Close()
+	defer tagObjects.Close()
 
-	tag, err := tags.Next()
-	if err != nil {
-		return "", err
+	tags := []string{}
+
+	if err := tagObjects.ForEach(func(r *plumbing.Reference) error {
+		tags = append(tags, r.Name().Short())
+		return nil
+	}); err != nil {
+		return "", errors.Wrapf(err, "could not iterate over tags %s", modPath)
 	}
 
-	return tag.Name().Short(), nil
+	if len(tags) == 0 {
+		return "", nil
+	}
+
+	sort.Strings(tags)
+
+	return tags[len(tags)-1], nil
+
 }
 
 var gitConfSectionLineRe = regexp.MustCompile(`^\[.*]\s*$`)
@@ -60,8 +72,11 @@ func GitUserName(modPath string) (string, error) {
 
 	// Local config doesn't have a name, so check global.
 	user, err := user.Current()
-	if user == nil || err != nil {
-		return "", err
+	if err != nil {
+		return "", errors.Wrapf(err, "could not get current user %s", modPath)
+	}
+	if user == nil {
+		return "", nil
 	}
 
 	gitConfFile := filepath.Join(user.HomeDir, ".gitconfig")

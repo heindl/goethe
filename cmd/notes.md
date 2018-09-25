@@ -23,6 +23,7 @@ Simple and to the point. Standard formatting achieves this well.
     https://github.com/segmentio/terraform-docs
 
 ## Future
+- Remove license header and just have the copyright at the bottom and link.
 - Include lines of code, number of subpackages, etc?
 - Generate a libraries used section from analyzing imports.
     - Generate short summaries of each from readme generator, if github summary doesn't exist

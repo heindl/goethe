@@ -6,6 +6,7 @@
 package render
 
 import (
+	"fmt"
 	"io"
 
 	"github.com/heindl/goethe/sections/cmdline"
@@ -20,11 +21,11 @@ import (
 type Section int
 
 const (
-	Header        Section = 1
-	Install       Section = 2
-	Usage         Section = 3
-	License       Section = 4
-	totalSections         = 5
+	Header        Section = 0
+	Install       Section = 1
+	Usage         Section = 2
+	License       Section = 3
+	totalSections         = 4
 )
 
 func (Ω Section) Render(info *utilities.ModuleInfo) ([]byte, error) {
@@ -56,7 +57,11 @@ func Render(filePath string, writer io.Writer) error {
 		i := _i
 		eg.Go(func() error {
 			var err error
+
 			rendered[i], err = Section(i).Render(modInfo)
+			if err != nil {
+				fmt.Println("err", i, err)
+			}
 			return err
 		})
 	}

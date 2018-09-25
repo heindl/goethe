@@ -22,7 +22,7 @@ func TestRender(t *testing.T) {
 	b, err := Render(mod)
 	assert.NoError(t, err)
 
-	expected := "\n## Command-line\n```bash\ngoethe [command_directory]\n```\n###### Flags\n```bash\n-p, --print   Print the template data to standard out.\n```\n"
+	expected := "\n## Command-line\n\n\n```bash\ngoethe [go_module_path]\n```\n```bash\n-p, --print   Print the template data to standard out.\n```\n"
 
 	assert.Equal(t, expected, string(b))
 }

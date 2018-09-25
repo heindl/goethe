@@ -37,6 +37,7 @@ func compile(packageFilePath, rootCommandVarName string) (command *CommandData, 
 
 	// FindRootCommandVars test with local go and capture json output.
 	cmd := exec.Command("go", "run", path.Join(dest, "."))
+	cmd.Dir = path.Join(dest, ".")
 	out, err := cmd.CombinedOutput()
 	if err != nil {
 		return nil, errors.Wrapf(err, "could not execute duplicated command package [%s]: %s", packageFilePath, string(out))

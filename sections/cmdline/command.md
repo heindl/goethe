@@ -1,36 +1,41 @@
 
 ## Command-line
 {{ if .HasExample -}}
+#### Example
 ```bash
-{{ .Example }}
+{{- .Example -}}
 ```
-{{- end -}}
-{{- if .HasSubCommands -}}
+{{- end}}
+
+{{ if .HasSubCommands -}}
 
 {{- range .SubCommands -}}
 ### {{ .Name }}
 {{ .Short }}
 ```bash
 {{ .UseLine }}
-{{ .LocalFlags }}
+{{- range .LocalFlags }}
+{{- . }}
+{{ end -}}
 ```
 {{ .Long }}
-{{- end}}
+{{end}}
+
 {{- else -}}
+
 ```bash
 {{ .UseLine }}
 ```
 {{- end -}}
 {{- if or .LocalFlags .PersistentFlags }}
-###### Flags
 ```bash
 {{if not .SubCommands -}}
-{{- range .LocalFlags -}}
-{{ . }}
+{{- range .LocalFlags }}
+{{- . }}
+{{ end -}}
 {{- end -}}
-{{- end -}}
-{{- range .PersistentFlags -}}
-{{ . }}
-{{- end }}
+{{- range .PersistentFlags }}
+{{- . }}
+{{ end -}}
 ```
 {{- end }}
