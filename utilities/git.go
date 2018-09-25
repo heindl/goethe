@@ -48,7 +48,7 @@ func GitUserName(modPath string) (string, error) {
 		return "", errors.Wrapf(err, "could not open git repo %s", modPath)
 	}
 	conf, err := repo.Config()
-	if err != nil {
+	if err != nil || conf == nil {
 		return "", errors.Wrapf(err, "could not get config %s", modPath)
 	}
 

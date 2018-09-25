@@ -14,8 +14,14 @@ require (
 	github.com/jbenet/go-context v0.0.0-20150711004518-d14ea06fba99 // indirect
 	github.com/kardianos/osext v0.0.0-20170510131534-ae77be60afb1 // indirect
 	github.com/kevinburke/ssh_config v0.0.0-20180830205328-81db2a75821e // indirect
+	github.com/mattn/go-runewidth v0.0.3 // indirect
 	github.com/mitchellh/go-homedir v1.0.0 // indirect
+	github.com/nmiyake/pkg v0.0.0-20170627000939-b64318170fde // indirect
 	github.com/onsi/gomega v1.4.2 // indirect
+	github.com/palantir/amalgomate v0.0.0-20180712214019-5ecd9b1733f4 // indirect
+	github.com/palantir/godel v2.10.0+incompatible // indirect
+	github.com/palantir/okgo v1.3.0 // indirect
+	github.com/palantir/pkg v0.0.0-20180924170532-5f69fe179dff // indirect
 	github.com/pelletier/go-buffruneio v0.2.0 // indirect
 	github.com/phogolabs/parcello v0.0.0-20180518134247-bae01a3ceb41
 	github.com/pkg/errors v0.8.0
@@ -33,6 +39,7 @@ require (
 	golang.org/x/sync v0.0.0-20180314180146-1d60e4601c6f
 	golang.org/x/sys v0.0.0-20180925112736-b09afc3d579e // indirect
 	gopkg.in/airbrake/gobrake.v2 v2.0.9 // indirect
+	gopkg.in/cheggaaa/pb.v1 v1.0.25 // indirect
 	gopkg.in/gemnasium/logrus-airbrake-hook.v2 v2.1.2 // indirect
 	gopkg.in/src-d/go-billy.v4 v4.3.0 // indirect
 	gopkg.in/src-d/go-git-fixtures.v3 v3.1.1 // indirect

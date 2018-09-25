@@ -1,4 +1,4 @@
-Goethe parses your module directory for license, installation and command data, and generates a Github README.md file.
+Goethe parses your module directory for license, installation and command data, and generates a README.md file.
 
 It is **very unstable** right now.
 
