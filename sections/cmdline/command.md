@@ -10,14 +10,17 @@
 {{ if .HasSubCommands -}}
 
 {{- range .SubCommands -}}
-### {{ .Name }}
-{{ .Short }}
+{{ if .Short }}{{.Short}}{{else}}{{.Name}}{{end}}
 ```bash
 {{ .UseLine }}
-{{- range .LocalFlags }}
-{{- . }}
-{{ end -}}
 ```
+{{- if .LocalFlags }}
+```bash
+{{- range .LocalFlags }}
+{{ . }}
+{{- end }}
+```
+{{ end }}
 {{ .Long }}
 {{end}}
 
@@ -26,14 +29,17 @@
 ```bash
 {{ .UseLine }}
 ```
-{{- end -}}
-{{- if or .LocalFlags .PersistentFlags }}
+{{ end -}}
+{{if or .LocalFlags .PersistentFlags -}}
+{{if .SubCommands -}}
+###### Global Flags
+{{end -}}
 ```bash
 {{if not .SubCommands -}}
 {{- range .LocalFlags }}
 {{- . }}
 {{ end -}}
-{{- end -}}
+{{- end}}
 {{- range .PersistentFlags }}
 {{- . }}
 {{ end -}}

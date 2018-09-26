@@ -25,7 +25,7 @@ func expectedCommandOutput() *CommandData {
 		Example:            "",
 		HasExample:         false,
 		Runnable:           false,
-		HasSubCommands:     false,
+		HasSubCommands:     true,
 		IsAvailableCommand: true,
 		PersistentFlags: []string{
 			"--config string   config file (default is $HOME/.goethe-test.yaml)",

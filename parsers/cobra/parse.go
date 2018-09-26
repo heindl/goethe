@@ -69,6 +69,7 @@ func (Ω *CommandData) update(cmd *cobra.Command) {
 	Ω.Long = stripIndents(cmd.Long)
 	Ω.Example = stripIndents(cmd.Example)
 	Ω.HasExample = cmd.HasExample()
+	Ω.HasSubCommands = cmd.HasSubCommands()
 	Ω.Runnable = cmd.Runnable()
 	Ω.IsAvailableCommand = cmd.IsAvailableCommand()
 
