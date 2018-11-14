@@ -15,6 +15,7 @@ import (
 	"regexp"
 
 	"github.com/heindl/goethe/render"
+	"github.com/heindl/goethe/utilities"
 	"github.com/phogolabs/parcello"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
@@ -23,7 +24,7 @@ import (
 //go:generate parcello -m long.md
 
 var goetheRootCmd = &cobra.Command{
-	Use:               "goethe [go_module_path]",
+	Use:               "goethe [go_module_path] >> ./README.md",
 	Short:             "Generate a github flavored README.md file from a Go module.",
 	DisableAutoGenTag: true,
 	// TODO: Include Version from static parsing.
@@ -32,13 +33,19 @@ var goetheRootCmd = &cobra.Command{
 		if len(args) > 0 {
 			directoryPath = args[0]
 		}
+		modInfo, err := utilities.ReadModule(directoryPath)
+		if err != nil {
+			fmt.Fprint(os.Stderr, err)
+			return
+		}
+
 		if cmd.Flag("print") != nil && cmd.Flag("print").Value.String() == "true" {
-			if err := render.Render(directoryPath, os.Stdout); err != nil {
+			if err := render.Render(modInfo, os.Stdout); err != nil {
 				fmt.Fprint(os.Stderr, err.Error())
 			}
 			return
 		}
-		if err := writeReadme(directoryPath); err != nil {
+		if err := writeReadme(modInfo.FilePath()); err != nil {
 			fmt.Fprint(os.Stderr, err.Error())
 		}
 	},

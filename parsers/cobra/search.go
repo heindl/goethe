@@ -28,8 +28,8 @@ func search(info *utilities.ModuleInfo) (cobraRootCommands, error) {
 		return nil, err
 	}
 
-	y := cobraRootCommands{}
-	locker := sync.Mutex{}
+	cmdM := cobraRootCommands{}
+	locker := sync.RWMutex{}
 
 	eg := errgroup.Group{}
 	for _, _pkg := range pkgs {
@@ -42,12 +42,16 @@ func search(info *utilities.ModuleInfo) (cobraRootCommands, error) {
 			}
 			ast.Walk(&execs, pkg.AstPkg)
 			for _, ex := range execs.execs {
+
 				if _, ok := vars.vars[path.Base(ex.cmdVarName)]; ok {
-					locker.Lock()
-					if _, ok := y[ex.cmdVarName]; !ok {
-						y[ex.cmdVarName] = []string{}
+					locker.RLock()
+					execs, ok := cmdM[ex.cmdVarName]
+					locker.RUnlock()
+					if !ok {
+						execs = []string{}
 					}
-					y[ex.cmdVarName] = append(y[ex.cmdVarName], path.Dir(ex.enclFunc))
+					locker.Lock()
+					cmdM[ex.cmdVarName] = append(execs, path.Dir(ex.enclFunc))
 					locker.Unlock()
 				}
 			}
@@ -58,7 +62,7 @@ func search(info *utilities.ModuleInfo) (cobraRootCommands, error) {
 		return nil, err
 	}
 
-	return y, nil
+	return cmdM, nil
 }
 
 type execCalls struct {

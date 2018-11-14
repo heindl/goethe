@@ -42,12 +42,7 @@ func (Ω Section) Render(info *utilities.ModuleInfo) ([]byte, error) {
 		return nil, nil
 	}
 }
-func Render(filePath string, writer io.Writer) error {
-
-	modInfo, err := utilities.ReadModule(filePath)
-	if err != nil {
-		return err
-	}
+func Render(modInfo *utilities.ModuleInfo, writer io.Writer) error {
 
 	rendered := make([][]byte, totalSections)
 
